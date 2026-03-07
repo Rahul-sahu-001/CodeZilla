@@ -1,416 +1,454 @@
 import { Link } from 'react-router-dom'
-import { LayoutGrid, Zap, Shield, GitBranch, ArrowRight, Activity, Box, Users, TrendingUp, Star } from 'lucide-react'
+import { useTheme } from '../context/ThemeContext'
+import {
+  LayoutGrid, Zap, Shield, GitBranch, ArrowRight,
+  Activity, Box, Users, TrendingUp, ArrowUpRight,
+  Star, Play, ChevronRight
+} from 'lucide-react'
 import { useEffect, useState } from 'react'
 
+/* ── DATA ── */
 const STATS = [
-  { label: 'Applets Deployed', value: '1,284', icon: Box,        color: 'var(--rose-bright)', delay: '0ms' },
-  { label: 'Total Executions', value: '48,391', icon: Activity,  color: 'var(--teal)',        delay: '100ms' },
-  { label: 'Active Builders',  value: '732',    icon: Users,     color: 'var(--gold-bright)', delay: '200ms' },
-  { label: 'WUSD Volume',      value: '$2.1M',  icon: TrendingUp, color: 'var(--green)',      delay: '300ms' },
+  { label: 'Applets',    value: '1,284', sub: '+12 this week',  icon: Box,        color: 'var(--rose-bright)' },
+  { label: 'Executions', value: '48.3K', sub: 'all time',       icon: Activity,   color: 'var(--teal)'        },
+  { label: 'Builders',   value: '732',   sub: 'active now',     icon: Users,      color: 'var(--gold-bright)' },
+  { label: 'Volume',     value: '$2.1M', sub: 'WUSD total',     icon: TrendingUp, color: 'var(--green)'       },
 ]
 
-const FEATURES = [
-  {
-    icon: LayoutGrid, title: 'Discover Applets',
-    desc: 'Browse a curated ecosystem of intelligent, composable on-chain services built by elite developers worldwide.',
-    color: 'var(--rose-bright)', bg: 'var(--rose-dim)', border: 'var(--border-rose)', delay: '0ms',
-  },
-  {
-    icon: Zap, title: 'Invoke Instantly',
-    desc: 'Execute any applet with your Weil wallet in one click. Every transaction is transparent and permanently recorded.',
-    color: 'var(--teal)', bg: 'var(--teal-dim)', border: 'rgba(78,205,196,0.22)', delay: '120ms',
-  },
-  {
-    icon: GitBranch, title: 'Compose Workflows',
-    desc: 'Chain multiple applets into powerful automated pipelines using our cinematic visual workflow builder.',
-    color: 'var(--gold-bright)', bg: 'var(--gold-dim)', border: 'rgba(212,168,83,0.22)', delay: '240ms',
-  },
-  {
-    icon: Shield, title: 'On-Chain Audit',
-    desc: 'Every invocation permanently carved into WeilChain — immutable, verifiable, unstoppable.',
-    color: 'var(--green)', bg: 'var(--green-dim)', border: 'rgba(0,229,160,0.18)', delay: '360ms',
-  },
+const FEATURED = [
+  { name: 'AI Data Analyzer',       cat: 'AI/ML',    price: '5.00',  rating: 4.8, runs: '3.8K', color: '#c9748a' },
+  { name: 'Contract Auditor',       cat: 'Security', price: '12.50', rating: 4.9, runs: '1.2K', color: '#ff7096' },
+  { name: 'Price Oracle Feed',      cat: 'Oracle',   price: '0.50',  rating: 4.7, runs: '28K',  color: '#d4a853' },
+  { name: 'WUSD Payment Router',    cat: 'DeFi',     price: '1.00',  rating: 4.6, runs: '9.1K', color: '#00e5a0' },
+  { name: 'NFT Metadata Generator', cat: 'NFT',      price: '3.00',  rating: 4.5, runs: '2.2K', color: '#4ecdc4' },
 ]
 
-const TESTIMONIALS = [
-  { name: 'Arjun M.', role: 'DeFi Dev', text: 'WeilMarket changed how we build. Deployed 3 applets in one sprint.' },
-  { name: 'Priya S.', role: 'Smart Contract Auditor', text: 'The audit trail on-chain is a game changer for compliance.' },
-  { name: 'Rahul K.', role: 'Web3 Builder', text: 'Workflow composer is insane. Chained 5 applets in 10 minutes.' },
+const ACTIVITIES = [
+  { action: 'invoked', applet: 'AI Analyzer',    wallet: '0x3f2a...', time: '2m ago',  color: 'var(--green)' },
+  { action: 'deployed', applet: 'NFT Generator', wallet: '0x91bc...', time: '8m ago',  color: 'var(--rose-bright)' },
+  { action: 'invoked', applet: 'Price Oracle',   wallet: '0x44ef...', time: '15m ago', color: 'var(--teal)' },
+  { action: 'invoked', applet: 'WUSD Router',    wallet: '0x77da...', time: '21m ago', color: 'var(--gold-bright)' },
 ]
 
 export default function Home() {
-  const [visible, setVisible] = useState(false)
-  useEffect(() => { const t = setTimeout(() => setVisible(true), 80); return () => clearTimeout(t) }, [])
+  const { isDark } = useTheme()
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => { const t = setTimeout(() => setMounted(true), 80); return () => clearTimeout(t) }, [])
 
   return (
-    <div style={{ maxWidth: 1380, margin: '0 auto', padding: '0 32px' }}>
+    <div style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 32px 64px' }}>
 
-      {/* ════ HERO ════ */}
-      <section style={{
-        position: 'relative',
-        padding: '110px 0 80px',
-        textAlign: 'center',
-        overflow: 'hidden',
+      {/* ════════════════════════════════════════
+          TOP STRIP — editorial eyebrow + title
+      ════════════════════════════════════════ */}
+      <div
+        className="animate-fadeInDown"
+        style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          marginBottom: 28, flexWrap: 'wrap', gap: 12,
+        }}
+      >
+        {/* Left: label + divider + date */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <span style={{
+            fontSize: 10, fontWeight: 700, letterSpacing: '0.18em',
+            textTransform: 'uppercase', color: 'var(--rose-gold)',
+            fontFamily: 'JetBrains Mono, monospace',
+          }}>
+            WeilMarket Dashboard
+          </span>
+          <div style={{ width: 1, height: 16, background: 'var(--border-mid)' }} />
+          <span style={{
+            fontSize: 10, color: 'var(--text-muted)',
+            fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.08em',
+          }}>
+            {new Date().toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}
+          </span>
+        </div>
+        {/* Right: live indicator */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ position: 'relative', width: 8, height: 8 }}>
+            <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: 'var(--green)', animation: 'glowPing 2s ease-out infinite', opacity: 0.5 }} />
+            <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--green)', position: 'relative', zIndex: 1 }} />
+          </div>
+          <span style={{ fontSize: 10, color: 'var(--green)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.08em' }}>Network Live</span>
+        </div>
+      </div>
+
+      {/* ════════════════════════════════════════
+          MAIN BENTO GRID
+      ════════════════════════════════════════ */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr 1fr 320px',
+        gridTemplateRows: 'auto auto auto',
+        gap: 14,
       }}>
-        {/* Floating orbs */}
-        <div className="orb orb-rose" style={{ width: 420, height: 420, top: -80, left: '50%', transform: 'translateX(-50%)' }} />
-        <div className="orb orb-gold"  style={{ width: 240, height: 240, top: 60, right: '8%' }} />
-        <div className="orb orb-teal"  style={{ width: 180, height: 180, bottom: 0, left: '5%' }} />
 
-        <div style={{ position: 'relative', zIndex: 1 }}>
-          {/* Eyebrow */}
-          <div
-            className="animate-fadeInDown"
-            style={{ marginBottom: 32, animationDelay: '0ms' }}
-          >
-            <span className="badge badge-rose">
-              <Zap size={9} />
-              Built on WeilChain · Web4 DApp Marketplace
-            </span>
+        {/* ── CELL 1: HERO TEXT (spans 3 cols) ── */}
+        <div
+          className="animate-fadeInLeft"
+          style={{
+            gridColumn: '1 / 4',
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border-mid)',
+            borderRadius: 18,
+            padding: '40px 44px',
+            position: 'relative', overflow: 'hidden',
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            gap: 32,
+            animationDelay: '0ms',
+          }}
+        >
+          {/* Orbs */}
+          <div className="orb orb-rose" style={{ width: 300, height: 300, top: -80, right: '20%', opacity: 0.6 }} />
+          <div className="orb orb-gold" style={{ width: 180, height: 180, bottom: -50, right: '5%', opacity: 0.5 }} />
+
+          {/* Top accent line */}
+          <div style={{ position: 'absolute', top: 0, left: '5%', right: '5%', height: '1.5px', background: 'linear-gradient(90deg, transparent, var(--rose-bright), var(--rose-gold), transparent)' }} />
+
+          {/* Left: headline */}
+          <div style={{ position: 'relative', zIndex: 1, maxWidth: 560 }}>
+            <div className="badge badge-rose" style={{ marginBottom: 20 }}>
+              <Zap size={9} /> Web4 On-Chain Marketplace
+            </div>
+
+            {/* ★ EDITORIAL TITLE — left-aligned, serif, italic ★ */}
+            <h1 style={{
+              fontFamily: 'Playfair Display, serif',
+              fontWeight: 900, fontStyle: 'italic',
+              fontSize: 'clamp(36px, 4vw, 58px)',
+              lineHeight: 1.05, letterSpacing: '-0.01em',
+              marginBottom: 16,
+            }}>
+              Discover & Deploy<br />
+              <span className="text-rose-shimmer">Intelligent Applets</span><br />
+              <span style={{ fontSize: '0.55em', fontStyle: 'normal', fontWeight: 400, color: 'var(--text-secondary)', letterSpacing: '0.01em' }}>
+                on the WeilChain Network
+              </span>
+            </h1>
+
+            <p style={{
+              fontSize: 14, color: 'var(--text-secondary)',
+              lineHeight: 1.8, marginBottom: 28, maxWidth: 440,
+            }}>
+              Browse, invoke, and compose on-chain applets powering the next generation of decentralized applications. Earn WUSD with every invocation.
+            </p>
+
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+              <Link to="/marketplace" style={{ textDecoration: 'none' }}>
+                <button className="btn-rose">
+                  <LayoutGrid size={13} /> Browse Marketplace <ArrowRight size={13} />
+                </button>
+              </Link>
+              <Link to="/deploy" style={{ textDecoration: 'none' }}>
+                <button className="btn-ghost">Deploy an Applet</button>
+              </Link>
+            </div>
           </div>
 
-          {/* Headline */}
-          <h1
-            className="animate-fadeInUp"
-            style={{
-              fontSize: 'clamp(52px, 7.5vw, 96px)',
-              fontWeight: 700,
-              lineHeight: 1.0,
-              letterSpacing: '0.02em',
-              marginBottom: 8,
-              animationDelay: '120ms',
-              textTransform: 'uppercase',
-              fontStyle: 'italic',
-            }}
-          >
-            The On-Chain
-          </h1>
-          <h1
-            className="animate-fadeInUp text-rose-shimmer"
-            style={{
-              fontSize: 'clamp(52px, 7.5vw, 96px)',
-              fontWeight: 700,
-              lineHeight: 1.05,
-              letterSpacing: '0.02em',
-              marginBottom: 32,
-              animationDelay: '200ms',
-              textTransform: 'uppercase',
-            }}
-          >
-            Applet Marketplace
-          </h1>
-
-          <p
-            className="animate-fadeInUp"
-            style={{
-              fontSize: 16, color: 'var(--text-secondary)',
-              maxWidth: 520, margin: '0 auto 50px',
-              lineHeight: 1.85, fontWeight: 400,
-              animationDelay: '340ms',
-            }}
-          >
-            Discover, invoke, compose and monetize intelligent applets
-            deployed on WeilChain. Powered by WUSD stablecoin.
-          </p>
-
-          {/* CTAs */}
-          <div
-            className="animate-fadeInUp"
-            style={{
-              display: 'flex', gap: 14, justifyContent: 'center',
-              flexWrap: 'wrap', animationDelay: '460ms',
-            }}
-          >
-            <Link to="/marketplace" style={{ textDecoration: 'none' }}>
-              <button className="btn-rose" style={{ fontSize: 12, padding: '14px 34px' }}>
-                <LayoutGrid size={14} />
-                Browse Marketplace
-                <ArrowRight size={14} />
-              </button>
-            </Link>
-            <Link to="/deploy" style={{ textDecoration: 'none' }}>
-              <button className="btn-ghost-rose" style={{ fontSize: 12, padding: '14px 34px' }}>
-                Deploy an Applet
-              </button>
-            </Link>
-          </div>
-
-          {/* Trust strip */}
-          <div
-            className="animate-fadeIn"
-            style={{
-              marginTop: 48, animationDelay: '700ms',
-              display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8,
-            }}
-          >
-            {[...Array(5)].map((_, i) => (
-              <Star key={i} size={14} fill="var(--rose-gold)" color="var(--rose-gold)" />
+          {/* Right: mini stat pills */}
+          <div style={{
+            position: 'relative', zIndex: 1,
+            display: 'flex', flexDirection: 'column', gap: 10, flexShrink: 0,
+          }}>
+            {STATS.map(({ label, value, sub, icon: Icon, color }, i) => (
+              <div
+                key={label}
+                className="animate-fadeInRight"
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 12,
+                  padding: '12px 16px',
+                  background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)',
+                  border: '1px solid var(--border)',
+                  borderRadius: 12, minWidth: 200,
+                  animationDelay: `${i * 80 + 200}ms`,
+                  transition: 'all 0.3s ease',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = color; e.currentTarget.style.transform = 'translateX(4px)' }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.transform = 'translateX(0)' }}
+              >
+                <div style={{
+                  width: 36, height: 36, borderRadius: 9, flexShrink: 0,
+                  background: `${color}15`, border: `1px solid ${color}28`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <Icon size={16} color={color} />
+                </div>
+                <div>
+                  <div style={{ fontSize: 18, fontWeight: 800, fontFamily: 'Playfair Display, serif', color: 'var(--text-primary)', lineHeight: 1, letterSpacing: '-0.02em' }}>{value}</div>
+                  <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 2, fontFamily: 'JetBrains Mono, monospace' }}>{label} · {sub}</div>
+                </div>
+              </div>
             ))}
-            <span style={{ color: 'var(--text-muted)', fontSize: 12, marginLeft: 6, fontFamily: 'var(--font-mono)' }}>
-              Trusted by 732+ builders
-            </span>
           </div>
         </div>
 
-        {/* Decorative divider */}
-        <div style={{ marginTop: 80 }} className="line-rose" />
-      </section>
+        {/* ── CELL 2: LIVE ACTIVITY FEED (right col, spans 2 rows) ── */}
+        <div
+          className="animate-fadeInRight"
+          style={{
+            gridColumn: '4 / 5',
+            gridRow: '1 / 3',
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border-mid)',
+            borderRadius: 18, padding: '24px 20px',
+            display: 'flex', flexDirection: 'column',
+            animationDelay: '150ms',
+            position: 'relative', overflow: 'hidden',
+          }}
+        >
+          <div style={{ position: 'absolute', top: 0, left: '10%', right: '10%', height: '1.5px', background: 'linear-gradient(90deg, transparent, var(--teal), transparent)' }} />
 
-      {/* ════ STATS ════ */}
-      <section style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))',
-        gap: 12, marginBottom: 80,
-      }}>
-        {STATS.map(({ label, value, icon: Icon, color, delay }, i) => (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 700, fontFamily: 'Playfair Display, serif', fontStyle: 'italic' }}>Live Activity</div>
+              <div style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>Real-time chain events</div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+              <div style={{ position: 'relative', width: 7, height: 7 }}>
+                <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: 'var(--green)', animation: 'glowPing 1.5s ease-out infinite', opacity: 0.5 }} />
+                <div style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--green)', position: 'relative', zIndex: 1 }} />
+              </div>
+              <span style={{ fontSize: 9, color: 'var(--green)', fontFamily: 'JetBrains Mono, monospace' }}>LIVE</span>
+            </div>
+          </div>
+
+          {/* Activity items */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, flex: 1 }}>
+            {ACTIVITIES.map(({ action, applet, wallet, time, color }, i) => (
+              <div
+                key={i}
+                className="animate-fadeInUp"
+                style={{
+                  padding: '12px 14px',
+                  background: isDark ? 'rgba(255,255,255,0.025)' : 'rgba(0,0,0,0.03)',
+                  border: '1px solid var(--border)',
+                  borderRadius: 10, transition: 'all 0.25s ease',
+                  animationDelay: `${i * 100 + 300}ms`,
+                }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = color; e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.025)' : 'rgba(0,0,0,0.03)' }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                  <span style={{ fontSize: 11, fontWeight: 700, color }}>{action}</span>
+                  <span style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace' }}>{time}</span>
+                </div>
+                <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 2 }}>{applet}</div>
+                <div style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace' }}>{wallet}</div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ marginTop: 14, height: 1, background: 'var(--border)', marginBottom: 12 }} />
+          <Link to="/marketplace" style={{
+            textDecoration: 'none', display: 'flex', alignItems: 'center',
+            justifyContent: 'center', gap: 6, fontSize: 11, color: 'var(--rose)',
+            fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase',
+            transition: 'gap 0.2s ease',
+          }}
+            onMouseEnter={e => e.currentTarget.style.gap = '10px'}
+            onMouseLeave={e => e.currentTarget.style.gap = '6px'}
+          >
+            View all transactions <ChevronRight size={13} />
+          </Link>
+        </div>
+
+        {/* ── CELLS 3-4-5: STAT CARDS (3 cols, row 2) ── */}
+        {[
+          { title: 'Marketplace',  desc: 'Browse 1,284 live applets across 7 categories.', icon: LayoutGrid, color: 'var(--rose-bright)', link: '/marketplace', cta: 'Explore' },
+          { title: 'Workflow Builder', desc: 'Chain applets into automated on-chain pipelines.', icon: GitBranch, color: 'var(--teal)', link: '/workflow', cta: 'Build' },
+          { title: 'Deploy Applet', desc: 'Publish your own applet and earn WUSD per call.', icon: Zap, color: 'var(--gold-bright)', link: '/deploy', cta: 'Deploy' },
+        ].map(({ title, desc, icon: Icon, color, link, cta }, i) => (
           <div
-            key={label}
+            key={title}
             className="animate-fadeInUp"
             style={{
               background: 'var(--bg-card)',
               border: '1px solid var(--border-mid)',
-              borderRadius: 'var(--radius-lg)',
-              padding: '22px 24px',
-              display: 'flex', alignItems: 'center', gap: 18,
-              animationDelay: delay,
+              borderRadius: 16, padding: '22px 22px 18px',
+              position: 'relative', overflow: 'hidden',
+              display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
               transition: 'all 0.35s cubic-bezier(0.16,1,0.3,1)',
-              position: 'relative', overflow: 'hidden', cursor: 'default',
+              animationDelay: `${i * 100 + 200}ms`,
             }}
             onMouseEnter={e => {
               e.currentTarget.style.borderColor = color
-              e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)'
-              e.currentTarget.style.boxShadow = `0 16px 48px rgba(0,0,0,0.4), 0 0 30px ${color}20`
+              e.currentTarget.style.transform = 'translateY(-5px)'
+              e.currentTarget.style.boxShadow = `0 18px 50px rgba(0,0,0,0.35), 0 0 30px ${color}18`
             }}
             onMouseLeave={e => {
               e.currentTarget.style.borderColor = 'var(--border-mid)'
-              e.currentTarget.style.transform = 'translateY(0) scale(1)'
+              e.currentTarget.style.transform = 'translateY(0)'
               e.currentTarget.style.boxShadow = 'none'
             }}
           >
-            {/* Glow top edge */}
-            <div style={{
-              position: 'absolute', top: 0, left: 0, right: 0, height: '1.5px',
-              background: `linear-gradient(90deg, transparent, ${color}, transparent)`,
-              opacity: 0.6,
-            }} />
-            <div style={{
-              width: 44, height: 44, borderRadius: 12, flexShrink: 0,
-              background: `${color}15`, border: `1px solid ${color}30`,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
-              <Icon size={20} color={color} />
-            </div>
-            <div>
+            {/* Corner glow */}
+            <div style={{ position: 'absolute', top: 0, right: 0, width: 90, height: 90, background: `radial-gradient(circle at 100% 0%, ${color}18 0%, transparent 70%)`, pointerEvents: 'none' }} />
+            {/* Top accent */}
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: `linear-gradient(90deg, transparent, ${color}, transparent)`, opacity: 0.6 }} />
+
+            <div style={{ position: 'relative', zIndex: 1 }}>
               <div style={{
-                fontSize: 26, fontWeight: 700,
-                fontFamily: 'var(--font-display)',
-                color: 'var(--text-primary)',
-                letterSpacing: '-0.02em',
-                animation: `countUp 0.8s ${delay} cubic-bezier(0.16,1,0.3,1) both`,
+                width: 42, height: 42, borderRadius: 11,
+                background: `${color}15`, border: `1px solid ${color}28`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                marginBottom: 14,
               }}>
-                {value}
+                <Icon size={20} color={color} />
               </div>
-              <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 500, marginTop: 1 }}>
-                {label}
-              </div>
+              <div style={{ fontSize: 16, fontWeight: 700, fontFamily: 'Playfair Display, serif', fontStyle: 'italic', marginBottom: 8 }}>{title}</div>
+              <p style={{ fontSize: 12.5, color: 'var(--text-secondary)', lineHeight: 1.7 }}>{desc}</p>
             </div>
+
+            <Link to={link} style={{
+              textDecoration: 'none',
+              display: 'inline-flex', alignItems: 'center', gap: 6,
+              marginTop: 18, fontSize: 11, fontWeight: 700,
+              color, letterSpacing: '0.07em', textTransform: 'uppercase',
+              transition: 'gap 0.2s ease',
+            }}
+              onMouseEnter={e => e.currentTarget.style.gap = '10px'}
+              onMouseLeave={e => e.currentTarget.style.gap = '6px'}
+            >
+              {cta} <ArrowUpRight size={13} />
+            </Link>
           </div>
         ))}
-      </section>
 
-      {/* ════ FEATURES ════ */}
-      <section style={{ marginBottom: 96 }}>
-        <div style={{ textAlign: 'center', marginBottom: 56 }}>
-          <div style={{
-            fontSize: 10, fontWeight: 700, color: 'var(--text-muted)',
-            letterSpacing: '0.2em', textTransform: 'uppercase',
-            marginBottom: 14, fontFamily: 'var(--font-mono)',
-          }}>
-            Platform Capabilities
-          </div>
-          <h2
-            className="animate-fadeInUp"
-            style={{ fontSize: 'clamp(30px, 4vw, 48px)', fontWeight: 700, fontStyle: 'italic', letterSpacing: '0.01em' }}
-          >
-            Infrastructure for the next<br />
-            <span className="text-rose-shimmer">generation of dApps</span>
-          </h2>
-        </div>
-
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: 12,
-        }}>
-          {FEATURES.map(({ icon: Icon, title, desc, color, bg, border, delay }) => (
-            <div
-              key={title}
-              className="animate-fadeInUp"
-              style={{
-                background: 'var(--bg-card)',
-                border: `1px solid var(--border-mid)`,
-                borderRadius: 'var(--radius-lg)',
-                padding: '28px 26px',
-                transition: 'all 0.4s cubic-bezier(0.16,1,0.3,1)',
-                animationDelay: delay,
-                position: 'relative', overflow: 'hidden', cursor: 'default',
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.borderColor = border
-                e.currentTarget.style.background = 'var(--bg-card-hover)'
-                e.currentTarget.style.transform = 'translateY(-6px) scale(1.01)'
-                e.currentTarget.style.boxShadow = `0 20px 60px rgba(0,0,0,0.4)`
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.borderColor = 'var(--border-mid)'
-                e.currentTarget.style.background = 'var(--bg-card)'
-                e.currentTarget.style.transform = 'translateY(0) scale(1)'
-                e.currentTarget.style.boxShadow = 'none'
-              }}
-            >
-              {/* Scan line effect on hover */}
-              <div style={{
-                width: 48, height: 48, borderRadius: 14,
-                background: bg, border: `1px solid ${border}`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                marginBottom: 20,
-              }}>
-                <Icon size={22} color={color} />
-              </div>
-              <h3 style={{
-                fontSize: 20, fontWeight: 700, fontStyle: 'italic',
-                marginBottom: 12, color: 'var(--text-primary)',
-              }}>
-                {title}
-              </h3>
-              <p style={{ fontSize: 13.5, color: 'var(--text-secondary)', lineHeight: 1.75 }}>
-                {desc}
-              </p>
-              {/* Corner accent */}
-              <div style={{
-                position: 'absolute', bottom: 0, right: 0,
-                width: 80, height: 80,
-                background: `radial-gradient(circle at 100% 100%, ${color}15 0%, transparent 70%)`,
-              }} />
+        {/* ── CELL 6: FEATURED APPLETS TABLE (spans 3 cols) ── */}
+        <div
+          className="animate-fadeInUp"
+          style={{
+            gridColumn: '1 / 4',
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border-mid)',
+            borderRadius: 18, padding: '24px 28px',
+            animationDelay: '400ms',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+            <div>
+              <div style={{ fontSize: 16, fontWeight: 700, fontFamily: 'Playfair Display, serif', fontStyle: 'italic' }}>Top Applets</div>
+              <div style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>Ranked by executions this week</div>
             </div>
-          ))}
-        </div>
-      </section>
+            <Link to="/marketplace" style={{
+              textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 5,
+              fontSize: 11, color: 'var(--rose)', fontWeight: 600,
+              letterSpacing: '0.06em', textTransform: 'uppercase',
+            }}>
+              View all <ArrowRight size={12} />
+            </Link>
+          </div>
 
-      {/* ════ TESTIMONIALS ════ */}
-      <section style={{ marginBottom: 96 }}>
-        <div style={{ textAlign: 'center', marginBottom: 40 }}>
+          {/* Table header */}
           <div style={{
-            fontSize: 10, color: 'var(--text-muted)', letterSpacing: '0.2em',
-            textTransform: 'uppercase', fontFamily: 'var(--font-mono)', marginBottom: 12,
-          }}>Builder Stories</div>
-          <h2 style={{ fontSize: 32, fontWeight: 700, fontStyle: 'italic' }}>
-            What builders are saying
-          </h2>
-        </div>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: 12,
-        }}>
-          {TESTIMONIALS.map(({ name, role, text }, i) => (
+            display: 'grid', gridTemplateColumns: '24px 1fr 90px 70px 70px 80px',
+            gap: 12, padding: '0 12px 10px',
+            borderBottom: '1px solid var(--border)',
+          }}>
+            {['#', 'Applet', 'Category', 'Price', 'Rating', ''].map(h => (
+              <div key={h} style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.08em', textTransform: 'uppercase' }}>{h}</div>
+            ))}
+          </div>
+
+          {/* Table rows */}
+          {FEATURED.map(({ name, cat, price, rating, runs, color }, i) => (
             <div
               key={name}
               className="animate-fadeInUp"
               style={{
-                background: 'var(--bg-card)',
-                border: '1px solid var(--border-mid)',
-                borderRadius: 'var(--radius-lg)',
-                padding: '24px 24px 20px',
-                animationDelay: `${i * 120}ms`,
-                position: 'relative',
-                transition: 'var(--transition)',
+                display: 'grid', gridTemplateColumns: '24px 1fr 90px 70px 70px 80px',
+                gap: 12, padding: '13px 12px',
+                borderBottom: i < FEATURED.length - 1 ? '1px solid var(--border)' : 'none',
+                transition: 'all 0.25s ease', borderRadius: 8,
+                animationDelay: `${i * 60 + 450}ms`,
               }}
-              onMouseEnter={e => {
-                e.currentTarget.style.borderColor = 'var(--border-rose)'
-                e.currentTarget.style.transform = 'translateY(-4px)'
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.borderColor = 'var(--border-mid)'
-                e.currentTarget.style.transform = 'translateY(0)'
-              }}
+              onMouseEnter={e => { e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.025)' }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
             >
-              <div style={{
-                fontSize: 36, color: 'var(--rose-dim)',
-                fontFamily: 'var(--font-display)', lineHeight: 1,
-                marginBottom: 14,
-              }}>"</div>
-              <p style={{
-                fontSize: 14, color: 'var(--text-secondary)',
-                lineHeight: 1.7, marginBottom: 20, fontStyle: 'italic',
-              }}>{text}</p>
+              <div style={{ fontSize: 12, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', alignSelf: 'center' }}>
+                {String(i+1).padStart(2, '0')}
+              </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <div style={{
-                  width: 36, height: 36, borderRadius: '50%',
+                <div style={{ width: 32, height: 32, borderRadius: 8, background: `${color}18`, border: `1px solid ${color}28`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, color, flexShrink: 0 }}>◆</div>
+                <span style={{ fontSize: 13, fontWeight: 600 }}>{name}</span>
+              </div>
+              <div style={{ alignSelf: 'center' }}>
+                <span style={{ fontSize: 10, color, fontWeight: 700, fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.06em', textTransform: 'uppercase' }}>{cat}</span>
+              </div>
+              <div style={{ alignSelf: 'center', fontSize: 13, fontWeight: 700, color: 'var(--green)', fontFamily: 'JetBrains Mono, monospace' }}>{price}</div>
+              <div style={{ alignSelf: 'center', display: 'flex', alignItems: 'center', gap: 4 }}>
+                <Star size={11} fill="var(--rose-gold)" color="var(--rose-gold)" />
+                <span style={{ fontSize: 12, fontWeight: 600 }}>{rating}</span>
+              </div>
+              <div style={{ alignSelf: 'center' }}>
+                <Link to="/marketplace" style={{
+                  textDecoration: 'none',
+                  display: 'inline-flex', alignItems: 'center', gap: 5,
+                  padding: '5px 12px',
                   background: 'linear-gradient(135deg, var(--rose-deep), var(--rose-gold))',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 14, color: '#fff', fontWeight: 700,
-                  fontFamily: 'var(--font-display)',
+                  borderRadius: 6, color: '#fff', fontSize: 10, fontWeight: 700,
+                  letterSpacing: '0.06em', textTransform: 'uppercase',
+                  boxShadow: '0 2px 10px rgba(201,116,138,0.22)',
+                  transition: 'all 0.2s ease',
                 }}>
-                  {name[0]}
-                </div>
-                <div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>{name}</div>
-                  <div style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>{role}</div>
-                </div>
+                  <Play size={9} fill="currentColor" /> Run
+                </Link>
               </div>
             </div>
           ))}
         </div>
-      </section>
 
-      {/* ════ CTA BANNER ════ */}
-      <section style={{ marginBottom: 96, position: 'relative', overflow: 'hidden' }}>
-        <div style={{
-          background: 'linear-gradient(135deg, rgba(158,61,88,0.12) 0%, rgba(201,116,138,0.08) 50%, rgba(158,61,88,0.05) 100%)',
-          border: '1px solid var(--border-rose)',
-          borderRadius: 'var(--radius-xl)',
-          padding: '64px 48px',
-          textAlign: 'center',
-          position: 'relative', overflow: 'hidden',
-          animation: 'borderGlow 4s ease-in-out infinite',
-        }}>
-          {/* Orbs inside banner */}
-          <div className="orb orb-rose" style={{ width: 300, height: 300, top: -80, left: '50%', transform: 'translateX(-50%)', opacity: 0.5 }} />
-          <div className="orb orb-gold" style={{ width: 150, height: 150, bottom: -40, right: '10%', opacity: 0.4 }} />
+        {/* ── CELL 7: QUICK DEPLOY CTA (right col, row 3) ── */}
+        <div
+          className="animate-fadeInRight"
+          style={{
+            gridColumn: '4 / 5',
+            background: 'linear-gradient(135deg, rgba(158,61,88,0.15) 0%, rgba(201,116,138,0.08) 100%)',
+            border: '1px solid var(--border-rose)',
+            borderRadius: 18, padding: '24px 22px',
+            display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+            position: 'relative', overflow: 'hidden',
+            animationDelay: '500ms',
+            animation: 'borderGlow 4s ease-in-out infinite',
+          }}
+        >
+          <div style={{ position: 'absolute', top: 0, left: '15%', right: '15%', height: '1.5px', background: 'linear-gradient(90deg, transparent, var(--rose-bright), transparent)' }} />
+          <div className="orb orb-rose" style={{ width: 160, height: 160, top: -40, right: -40, opacity: 0.5 }} />
 
           <div style={{ position: 'relative', zIndex: 1 }}>
-            <h2 style={{
-              fontSize: 'clamp(28px, 4vw, 48px)',
-              fontWeight: 700, fontStyle: 'italic',
-              letterSpacing: '0.01em', marginBottom: 16,
+            <div style={{
+              width: 44, height: 44, borderRadius: 12,
+              background: 'var(--rose-dim)', border: '1px solid var(--border-rose)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              marginBottom: 16, animation: 'rosePulse 3s ease-in-out infinite',
             }}>
-              Ready to build on <span className="text-rose-shimmer">WeilChain?</span>
-            </h2>
-            <p style={{
-              color: 'var(--text-secondary)', fontSize: 15,
-              marginBottom: 36, maxWidth: 420, margin: '0 auto 36px',
-              lineHeight: 1.75,
-            }}>
-              Deploy your first applet and start earning WUSD from every single invocation. Join 732+ builders today.
-            </p>
-            <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
-              <Link to="/deploy" style={{ textDecoration: 'none' }}>
-                <button className="btn-rose" style={{ fontSize: 12, padding: '14px 36px' }}>
-                  <Zap size={14} />
-                  Deploy Your First Applet
-                  <ArrowRight size={14} />
-                </button>
-              </Link>
-              <Link to="/marketplace" style={{ textDecoration: 'none' }}>
-                <button className="btn-ghost-rose" style={{ fontSize: 12, padding: '14px 28px' }}>
-                  Explore Marketplace
-                </button>
-              </Link>
+              <Zap size={20} color="var(--rose-bright)" />
             </div>
+            <div style={{ fontSize: 18, fontWeight: 700, fontFamily: 'Playfair Display, serif', fontStyle: 'italic', marginBottom: 10 }}>
+              Start Building<br />on WeilChain
+            </div>
+            <p style={{ fontSize: 12.5, color: 'var(--text-secondary)', lineHeight: 1.75, marginBottom: 20 }}>
+              Deploy your first applet in minutes. Earn WUSD from every execution.
+            </p>
+          </div>
+
+          <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <Link to="/deploy" style={{ textDecoration: 'none' }}>
+              <button className="btn-rose" style={{ width: '100%', justifyContent: 'center', fontSize: 11 }}>
+                <Zap size={13} /> Deploy Now <ArrowRight size={13} />
+              </button>
+            </Link>
+            <Link to="/workflow" style={{ textDecoration: 'none' }}>
+              <button className="btn-ghost" style={{ width: '100%', justifyContent: 'center', fontSize: 11 }}>
+                <GitBranch size={13} /> Build Workflow
+              </button>
+            </Link>
           </div>
         </div>
-      </section>
+
+      </div>{/* end bento grid */}
 
     </div>
   )
